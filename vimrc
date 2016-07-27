@@ -2,6 +2,9 @@
 " This must be first, because it changes other options as a side effect.
 set nocompatible
 
+
+
+
 " Plugins management.
 filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
@@ -26,6 +29,12 @@ Plugin 'airblade/vim-gitgutter'
 Plugin 'scrooloose/nerdcommenter'
 call vundle#end()
 filetype plugin indent on
+" Update plugins.
+nnoremap <leader>u :w<CR>:PluginUpdate<CR>
+
+
+
+
 
 " Autosource vimrc on write.
 augroup reload_vimrc
@@ -33,48 +42,21 @@ augroup reload_vimrc
     autocmd BufWritePost $MYVIMRC nested source $MYVIMRC
 augroup END
 
+
+
+
+
+
+
 let mapleader = ","
 "TODO voir localmapleader et g:mapleader
 " set timeoutlen=666
 
-" Update plugins.
-nnoremap <leader>u :w<CR>:PluginUpdate<CR>
 
 " Create a todo.
 " TODO revoir ce truc avec la commande :startinsert
 nnoremap <silent> <leader>t :execute "normal! OTODO "<CR>a
 "nnoremap <leader>T <Plug>NerdCommenterComme
-
-" TODO voir un peu ce que c'est <silent> et <expr> pour map, chercher du cote
-" de <unique>
-
-" TODO resoudre le bug qui fait que je ne peux pas remappe <Esc> a cause des
-" arrows keys, la solution etant ptet d'arreter d'etre un n00b et de remap les 
-" arrows sur <nop>
-
-
-"TODO quand j'aurai resolu le bug du remap du <Esc> mettre en place les map
-"suivants (ne pas les mettre ici mais dans leur section, exemple le premier
-"appartient a la section de la commande line window: 
-
-"augroup escape_command_window
-"    autocmd!
-"    autocmd CmdwinEnter * nnoremap <Esc> Go<CR>
-"    autocmd CmdwinLeave * nunmap <Esc>
-"augroup END
-
-"vnoremap <Esc> o<Esc>
-
-"nnoremap <Esc> :nohighlight<CR>
-
-" TODO mettre en place la navigation par buffer comme si c'etait des tabs, et
-" mapper comme pour un navigateur <C-Tab>, <C-S-Tab>, <C-opennew>, <C-edit>,
-" <C-w> (voir si ces mappings sont pas deja pris
-
-" TODO un truc qui me stresse c'est d'avoir un plugin qui m'ecrase un keymap,
-" ya moyen d'avoir un warning par vim a ce niveau ?
-
-" TODO plugin highlight du pattern de search courant
 
 " Be centered
 augroup be_centered
@@ -84,11 +66,10 @@ augroup be_centered
     "autocmd CursorMovedI * let beforezz=getcurpos()[4] | execute "normal! zz" | redraw | echo beforezz getcurpos()[4]
 augroup END
 
-" Set colorscheme and syntax
-colorscheme ubaryd
-" has to be before syntax enable
-set bg=dark
+" Set colorscheme and syntax, order of instructions matter !!
 syntax enable
+set bg=dark
+colorscheme ubaryd
 
 " Enable mouse for all modes
 set mouse=a
@@ -169,3 +150,34 @@ nnoremap : q:i
 " TODO find a mean to highlight the current search term with a different color
 " TODO customize the airline status to remove undesired information, and get
 " to know what the 'trailing' information is.
+" TODO voir un peu ce que c'est <silent> et <expr> pour map, chercher du cote
+" de <unique>
+
+" TODO resoudre le bug qui fait que je ne peux pas remappe <Esc> a cause des
+" arrows keys, la solution etant ptet d'arreter d'etre un n00b et de remap les 
+" arrows sur <nop>
+
+
+"TODO quand j'aurai resolu le bug du remap du <Esc> mettre en place les map
+"suivants (ne pas les mettre ici mais dans leur section, exemple le premier
+"appartient a la section de la commande line window: 
+
+"augroup escape_command_window
+"    autocmd!
+"    autocmd CmdwinEnter * nnoremap <Esc> Go<CR>
+"    autocmd CmdwinLeave * nunmap <Esc>
+"augroup END
+
+"vnoremap <Esc> o<Esc>
+
+"nnoremap <Esc> :nohighlight<CR>
+
+" TODO mettre en place la navigation par buffer comme si c'etait des tabs, et
+" mapper comme pour un navigateur <C-Tab>, <C-S-Tab>, <C-opennew>, <C-edit>,
+" <C-w> (voir si ces mappings sont pas deja pris
+
+" TODO un truc qui me stresse c'est d'avoir un plugin qui m'ecrase un keymap,
+" ya moyen d'avoir un warning par vim a ce niveau ?
+
+" TODO plugin highlight du pattern de search courant
+
