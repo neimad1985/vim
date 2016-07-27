@@ -4,7 +4,6 @@ set nocompatible
 
 
 
-
 " Plugins management.
 filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
@@ -30,7 +29,9 @@ Plugin 'scrooloose/nerdcommenter'
 call vundle#end()
 filetype plugin indent on
 " Update plugins.
-nnoremap <leader>u :w<CR>:PluginUpdate<CR>
+" TODO il faudrait utliser une fonction pour faire  if je suis dans le vimrc,
+" je le write avant et c'est pas le cas juste j'update
+nnoremap <unique> <leader>u :PluginUpdate<CR>
 
 
 
@@ -39,7 +40,7 @@ nnoremap <leader>u :w<CR>:PluginUpdate<CR>
 " Autosource vimrc on write.
 augroup reload_vimrc
     autocmd!
-    autocmd BufWritePost $MYVIMRC nested source $MYVIMRC
+    autocmd BufWritePost $MYVIMRC source $MYVIMRC
 augroup END
 
 
@@ -52,11 +53,6 @@ let mapleader = ","
 "TODO voir localmapleader et g:mapleader
 " set timeoutlen=666
 
-
-" Create a todo.
-" TODO revoir ce truc avec la commande :startinsert
-nnoremap <silent> <leader>t :execute "normal! OTODO "<CR>a
-"nnoremap <leader>T <Plug>NerdCommenterComme
 
 " Be centered
 augroup be_centered
@@ -147,6 +143,11 @@ set wrapscan
 nnoremap : q:i
 "set history=200
 
+" Create a todo.
+" TODO revoir ce truc avec la commande :startinsert
+nnoremap <silent> <leader>t :execute "normal! OTODO "<CR>a
+"nnoremap <leader>T <Plug>NerdCommenterComme
+
 " TODO find a mean to highlight the current search term with a different color
 " TODO customize the airline status to remove undesired information, and get
 " to know what the 'trailing' information is.
@@ -181,3 +182,6 @@ nnoremap : q:i
 
 " TODO plugin highlight du pattern de search courant
 
+" TODO faire un maps sur <Esc> pour quitter le fichier courant, avec un menu
+" et des options pour save, cancel ou discard, dans le meme genre que quand on
+" ouvre un fichier qui a swap associé
