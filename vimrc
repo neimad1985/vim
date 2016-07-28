@@ -2,6 +2,10 @@
 " This must be first, because it changes other options as a side effect.
 set nocompatible
 
+" I put the mapleader defin
+let mapleader = ","
+"TODO voir localmapleader et g:mapleader
+" set timeoutlen=666
 
 
 " Plugins management.
@@ -23,7 +27,6 @@ Plugin 'vim-airline/vim-airline'
 Plugin 'haya14busa/incsearch.vim'
 " Git integration
 Plugin 'tpope/vim-fugitive'
-Plugin 'airblade/vim-gitgutter'
 " Easy comments
 Plugin 'scrooloose/nerdcommenter'
 call vundle#end()
@@ -33,6 +36,11 @@ filetype plugin indent on
 " je le write avant et c'est pas le cas juste j'update
 nnoremap <unique> <leader>u :PluginUpdate<CR>
 
+" Configure NERDCommenter.
+" Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
+
+nnoremap <unique> <leader><Space> :noh<CR>
 
 
 
@@ -49,18 +57,6 @@ augroup END
 
 
 
-let mapleader = ","
-"TODO voir localmapleader et g:mapleader
-" set timeoutlen=666
-
-
-" Be centered
-augroup be_centered
-    autocmd!
-    "autocmd CursorMoved * execute "normal! zz" | redraw | echo virtcol('.')
-    "autocmd CursorMoved * echo wincol() | execute "normal! zz" | echo wincol()
-    "autocmd CursorMovedI * let beforezz=getcurpos()[4] | execute "normal! zz" | redraw | echo beforezz getcurpos()[4]
-augroup END
 
 " Set colorscheme and syntax, order of instructions matter !!
 syntax enable
@@ -72,6 +68,22 @@ set mouse=a
 
 " Encoding
 set encoding=utf-8
+
+" Always have a swapfile.
+set swapfile
+
+" Open in a vertical split
+" TODO remove when using 'tabs' (buffers)
+nnoremap <unique> <leader><leader> q:ivertical botright help<Space>
+
+
+" Be centered
+"augroup be_centered
+"    autocmd!
+"    autocmd CursorMoved * execute "normal! zz" | redraw | echo virtcol('.')
+"    autocmd CursorMoved * echo wincol() | execute "normal! zz" | echo wincol()
+"    autocmd CursorMovedI * let beforezz=getcurpos()[4] | execute "normal! zz" | redraw | echo beforezz getcurpos()[4]
+"augroup END
 
 " Status line config
 set noshowmode
@@ -140,13 +152,19 @@ set wrapscan
 
 
 " Improve command line, go to the command window !
+" TODO voir si je ne fais pas une fonction qui recupere la taille de la
+" fenetre actuelle et qui set cmdwinheight au vol pour que ca prenne tout
+" l'ecran
+set cmdwinheight=25
+" TODO voir pourquoi le set history ne marche pas
+set history=200
 nnoremap : q:i
-"set history=200
+nnoremap / q/i
+nnoremap ? q?i
+
 
 " Create a todo.
-" TODO revoir ce truc avec la commande :startinsert
-nnoremap <silent> <leader>t :execute "normal! OTODO "<CR>a
-"nnoremap <leader>T <Plug>NerdCommenterComme
+nnoremap <silent> <leader>t O<Esc>0DiTODO<Space><Esc>:call NERDComment('n', 'comment')<CR>A
 
 " TODO find a mean to highlight the current search term with a different color
 " TODO customize the airline status to remove undesired information, and get
@@ -171,17 +189,21 @@ nnoremap <silent> <leader>t :execute "normal! OTODO "<CR>a
 
 "vnoremap <Esc> o<Esc>
 
-"nnoremap <Esc> :nohighlight<CR>
-
 " TODO mettre en place la navigation par buffer comme si c'etait des tabs, et
 " mapper comme pour un navigateur <C-Tab>, <C-S-Tab>, <C-opennew>, <C-edit>,
 " <C-w> (voir si ces mappings sont pas deja pris
-
-" TODO un truc qui me stresse c'est d'avoir un plugin qui m'ecrase un keymap,
-" ya moyen d'avoir un warning par vim a ce niveau ?
 
 " TODO plugin highlight du pattern de search courant
 
 " TODO faire un maps sur <Esc> pour quitter le fichier courant, avec un menu
 " et des options pour save, cancel ou discard, dans le meme genre que quand on
 " ouvre un fichier qui a swap associé
+
+" TODO configurer nerdcommenter
+"
+" TODO faire une autocommand qui avertit quand on a pas detecte de filetype
+" (ou voir si ca existe)
+" TODO la doc de vim donne les goods practice dev de plugin, verif vite fait
+" si les plugins que j'utilise les respectent
+" TODO voir si je peux modif la couleur des commentaires de ubaryd ou si il
+" faut que je fasse mon theme ?
