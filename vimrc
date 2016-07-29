@@ -29,6 +29,8 @@ Plugin 'haya14busa/incsearch.vim'
 Plugin 'tpope/vim-fugitive'
 " Easy comments
 Plugin 'scrooloose/nerdcommenter'
+" TODO voir ca et si je trouve un truc de match pais correct
+" alvan/vim-closetag
 call vundle#end()
 filetype plugin indent on
 " Update plugins.
@@ -72,18 +74,12 @@ set encoding=utf-8
 " Always have a swapfile.
 set swapfile
 
-" Open in a vertical split
+" Open help in a vertical split.
 " TODO remove when using 'tabs' (buffers)
 nnoremap <unique> <leader><leader> q:ivertical botright help<Space>
 
 
-" Be centered
-"augroup be_centered
-"    autocmd!
-"    autocmd CursorMoved * execute "normal! zz" | redraw | echo virtcol('.')
-"    autocmd CursorMoved * echo wincol() | execute "normal! zz" | echo wincol()
-"    autocmd CursorMovedI * let beforezz=getcurpos()[4] | execute "normal! zz" | redraw | echo beforezz getcurpos()[4]
-"augroup END
+
 
 " Status line config
 set noshowmode
@@ -155,13 +151,13 @@ set wrapscan
 " TODO voir si je ne fais pas une fonction qui recupere la taille de la
 " fenetre actuelle et qui set cmdwinheight au vol pour que ca prenne tout
 " l'ecran
-set cmdwinheight=25
+set cmdwinheight=100
 " TODO voir pourquoi le set history ne marche pas
 set history=200
 nnoremap : q:i
-nnoremap / q/i
-nnoremap ? q?i
 
+" Have cursor always centered vertically
+set scrolloff=100
 
 " Create a todo.
 nnoremap <silent> <leader>t O<Esc>0DiTODO<Space><Esc>:call NERDComment('n', 'comment')<CR>A
@@ -181,13 +177,13 @@ nnoremap <silent> <leader>t O<Esc>0DiTODO<Space><Esc>:call NERDComment('n', 'com
 "suivants (ne pas les mettre ici mais dans leur section, exemple le premier
 "appartient a la section de la commande line window: 
 
-"augroup escape_command_window
-"    autocmd!
-"    autocmd CmdwinEnter * nnoremap <Esc> Go<CR>
-"    autocmd CmdwinLeave * nunmap <Esc>
-"augroup END
+augroup escape_command_window
+    autocmd!
+    autocmd CmdwinEnter * noremap <Esc> <C-c><C-c>
+    autocmd CmdwinLeave * unmap <Esc>
+augroup END
 
-"vnoremap <Esc> o<Esc>
+vnoremap <Esc> o<Esc>
 
 " TODO mettre en place la navigation par buffer comme si c'etait des tabs, et
 " mapper comme pour un navigateur <C-Tab>, <C-S-Tab>, <C-opennew>, <C-edit>,
