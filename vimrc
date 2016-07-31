@@ -2,13 +2,15 @@
 " This must be first, because it changes other options as a side effect.
 set nocompatible
 
-" I put the mapleader defin
-let mapleader = ","
 "TODO voir localmapleader et g:mapleader
+let mapleader = ","
 " set timeoutlen=666
 
 
-" Plugins management.
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""" Plugins management. """""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
@@ -29,7 +31,7 @@ Plugin 'haya14busa/incsearch.vim'
 Plugin 'tpope/vim-fugitive'
 " Easy comments
 Plugin 'scrooloose/nerdcommenter'
-" TODO voir ca et si je trouve un truc de match pais correct
+" TODO voir ca et si je trouve un truc de match pairs correct
 " alvan/vim-closetag
 call vundle#end()
 filetype plugin indent on
@@ -38,9 +40,18 @@ filetype plugin indent on
 " je le write avant et c'est pas le cas juste j'update
 nnoremap <unique> <leader>u :PluginUpdate<CR>
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Configure NERDCommenter.
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
+
+" Configure the status line.
+set noshowmode
+set ttimeoutlen=50
+" always have a status line
+set laststatus=2
+let g:airline_powerline_fonts = 1
 
 nnoremap <unique> <leader><Space> :noh<CR>
 
@@ -60,10 +71,28 @@ augroup END
 
 
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Congifure appearance : line numbers, color scheme, indentation, etc.
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set colorscheme and syntax, order of instructions matter !!
+set t_Co=256
 syntax enable
 set bg=dark
 colorscheme ubaryd
+set list
+set listchars=tab:>.,trail:.,eol:-,nbsp:%,extends:~,precedes:~
+set relativenumber
+set number
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set expandtab
+set wrap
+set colorcolumn=80
+" Have cursor always centered vertically
+set scrolloff=100
+
+
 
 " Enable mouse for all modes
 set mouse=a
@@ -80,13 +109,6 @@ nnoremap <unique> <leader><leader> q:ivertical botright help<Space>
 
 
 
-
-" Status line config
-set noshowmode
-set ttimeoutlen=50
-" always have a status line
-set laststatus=2
-let g:airline_powerline_fonts = 1
 
 nnoremap Q gq
 nnoremap gQ <NOP>
@@ -128,25 +150,15 @@ augroup RestoreCursor
 augroup END
 
 
-set list
-set listchars=tab:>.,trail:.,eol:-,nbsp:%,extends:~,precedes:~
-
-set relativenumber
-set number
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
-set expandtab
-set wrap
-
-set colorcolumn=80
-
 set hlsearch
 set incsearch
 set wrapscan
 
 
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Configure the command-line
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Improve command line, go to the command window !
 " TODO voir si je ne fais pas une fonction qui recupere la taille de la
 " fenetre actuelle et qui set cmdwinheight au vol pour que ca prenne tout
@@ -155,9 +167,12 @@ set cmdwinheight=100
 " TODO voir pourquoi le set history ne marche pas
 set history=200
 nnoremap : q:i
+augroup escape_command_window
+    autocmd!
+    autocmd CmdwinEnter * noremap <Esc> <C-c><C-c>
+    autocmd CmdwinLeave * unmap <Esc>
+augroup END
 
-" Have cursor always centered vertically
-set scrolloff=100
 
 " Create a todo.
 nnoremap <silent> <leader>t O<Esc>0DiTODO<Space><Esc>:call NERDComment('n', 'comment')<CR>A
@@ -176,12 +191,6 @@ nnoremap <silent> <leader>t O<Esc>0DiTODO<Space><Esc>:call NERDComment('n', 'com
 "TODO quand j'aurai resolu le bug du remap du <Esc> mettre en place les map
 "suivants (ne pas les mettre ici mais dans leur section, exemple le premier
 "appartient a la section de la commande line window: 
-
-augroup escape_command_window
-    autocmd!
-    autocmd CmdwinEnter * noremap <Esc> <C-c><C-c>
-    autocmd CmdwinLeave * unmap <Esc>
-augroup END
 
 vnoremap <Esc> o<Esc>
 
