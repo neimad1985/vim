@@ -2,6 +2,10 @@
 " This must be first, because it changes other options as a side effect.
 set nocompatible
 
+" TODO voir pour faire un mapclear (et un function clear ?, peut etre pas
+" necessaire car on peut declarer les fonctions grace a function! mais c'est
+" peut-etre crade, voir aussi pour les noms d'autogroups)
+
 "TODO voir localmapleader et g:mapleader
 let mapleader = ","
 " set timeoutlen=666
@@ -55,8 +59,46 @@ let g:airline_powerline_fonts = 1
 
 nnoremap <unique> <leader><Space> :noh<CR>
 
+" TODO mettre un mapping
+" set pastetoggle=
+
+" TODO relire cette doc
+set clipboard=unnamed
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""" Quiting and saving."""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" TODO ne fonctionne pas
+" nnoremap <Esc> :q<CR>
+
+" <C-v> is usually used to put the stop the process and put it to backgroound.
+" I never use this feature so map it to update.
+nnoremap <C-z> :update<CR>
+
+" TODO la taille de l'aide de vim est fixe, 78 colonnes si je ne me trompe
+" pas. Faire en sorte que quand je l'ouvre verticalement elle soit a la bonne
+" taille, sauf je commence a bosser avec des buffers en guise de tabcs"
 
 
+" TODO there are many other keys to be no-oped, like page up/down, do it later.
+" Be a big boy, do not use arrows.
+" TODO revoir les modes du noremap pour etre sur de tous les couvrir
+noremap <DOWN> <NOP>
+noremap <UP> <NOP>
+noremap <LEFT> <NOP>
+noremap <RIGHT> <NOP>
+
+
+" Indenting blocks without losing the selection.
+" TODO voir si c'est vraiment utile car l'indentation devrait etre geree
+" automatiquement par des plugins ou la commande = ou gq ?
+vnoremap < <gv
+vnoremap > >gv
+
+nnoremap H ^
+nnoremap L $
+" TODO mettre des unique, silent, expr partout ou cest necessaire pour les
+" mappings
 
 " Autosource vimrc on write.
 augroup reload_vimrc
@@ -75,6 +117,8 @@ augroup END
 " Congifure appearance : line numbers, color scheme, indentation, etc.
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set colorscheme and syntax, order of instructions matter !!
+" Normally t_Co should be set depending on the capabilities of the terminal,
+" we assume that every terminal as 256 colors.
 set t_Co=256
 syntax enable
 set bg=dark
@@ -110,7 +154,7 @@ nnoremap <unique> <leader><leader> q:ivertical botright help<Space>
 
 
 
-nnoremap Q gq
+nnorema Q gq
 nnoremap gQ <NOP>
 
 " Allow backspacing over everything in insert mode.
@@ -124,8 +168,6 @@ set history=50
 set ruler
 " display incomplete commands
 set showcmd
-set ignorecase
-set smartcase
 
 " CTRL-U in insert mode deletes a lot.  Use CTRL-G u to first break undo,
 " so that you can undo CTRL-U after inserting a line break.
@@ -150,8 +192,13 @@ augroup RestoreCursor
 augroup END
 
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Search
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set hlsearch
 set incsearch
+set ignorecase
+set smartcase
 set wrapscan
 
 
@@ -160,9 +207,6 @@ set wrapscan
 " Configure the command-line
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Improve command line, go to the command window !
-" TODO voir si je ne fais pas une fonction qui recupere la taille de la
-" fenetre actuelle et qui set cmdwinheight au vol pour que ca prenne tout
-" l'ecran
 set cmdwinheight=100
 " TODO voir pourquoi le set history ne marche pas
 set history=200
@@ -177,6 +221,12 @@ augroup END
 " Create a todo.
 nnoremap <silent> <leader>t O<Esc>0DiTODO<Space><Esc>:call NERDComment('n', 'comment')<CR>A
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Miscellaneous
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set writebackup
+set nopaste
+nnoremap <leader>p :set paste<CR>p:set nopaste<CR>
 " TODO find a mean to highlight the current search term with a different color
 " TODO customize the airline status to remove undesired information, and get
 " to know what the 'trailing' information is.
@@ -204,11 +254,24 @@ vnoremap <Esc> o<Esc>
 " et des options pour save, cancel ou discard, dans le meme genre que quand on
 " ouvre un fichier qui a swap associé
 
-" TODO configurer nerdcommenter
-"
 " TODO faire une autocommand qui avertit quand on a pas detecte de filetype
 " (ou voir si ca existe)
 " TODO la doc de vim donne les goods practice dev de plugin, verif vite fait
 " si les plugins que j'utilise les respectent
 " TODO voir si je peux modif la couleur des commentaires de ubaryd ou si il
 " faut que je fasse mon theme ?
+" TODO lire l'aider insert.txt pour connaitre tous les raccourcis utiles pour
+" eviter de retourner toujours en mode normal puis insert a nouveau
+" TODO faire un macro qui permet de deplacer un block en mode visual line
+" TODO utiliser les arrows pour changer de buffer, ca peut etre une bonne idee
+
+" TODO voir si je met en place le autosave des buffer, je pense que oui car
+" tout fichier devrait etre sous git et je peux donc recup l'ancienne version
+" dans mon depot si je veux, du coup, est-ce que je vire le set backup
+
+
+
+" TODO voir pourquoi ca ne marche pas
+" autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red             
+" autocmd InsertLeave * match ExtraWhitespace /\s\+$/
+
