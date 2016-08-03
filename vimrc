@@ -57,13 +57,6 @@ set ttimeoutlen=50
 set laststatus=2
 let g:airline_powerline_fonts = 1
 
-nnoremap <unique> <leader><Space> :noh<CR>
-
-" TODO mettre un mapping
-" set pastetoggle=
-
-" TODO relire cette doc
-set clipboard=unnamed
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """""""""""""""""""""" Quiting and saving."""""""""""""""""""""""""""""""""""""
@@ -83,10 +76,17 @@ nnoremap <C-z> :update<CR>
 " TODO there are many other keys to be no-oped, like page up/down, do it later.
 " Be a big boy, do not use arrows.
 " TODO revoir les modes du noremap pour etre sur de tous les couvrir
-noremap <DOWN> <NOP>
-noremap <UP> <NOP>
-noremap <LEFT> <NOP>
-noremap <RIGHT> <NOP>
+inoremap <unique> <DOWN> <NOP>
+inoremap <unique> <UP> <NOP>
+inoremap <unique> <LEFT> <NOP>
+inoremap <unique> <RIGHT> <NOP>
+noremap <unique> <DOWN> <NOP>
+noremap <unique> <UP> <NOP>
+noremap <unique> <LEFT> <NOP>
+noremap <unique> <RIGHT> <NOP>
+inoremap <unique> <leader><leader> <Esc>
+noremap <unique> <leader><leader> <Esc>
+nnoremap <unique> <leader><Space> :noh<CR>
 
 
 " Indenting blocks without losing the selection.
@@ -95,6 +95,7 @@ noremap <RIGHT> <NOP>
 vnoremap < <gv
 vnoremap > >gv
 
+" TODO si je n'utilise plus ^ et $, je les unmap ou utilise pour autre chose
 nnoremap H ^
 nnoremap L $
 " TODO mettre des unique, silent, expr partout ou cest necessaire pour les
@@ -149,7 +150,7 @@ set swapfile
 
 " Open help in a vertical split.
 " TODO remove when using 'tabs' (buffers)
-nnoremap <unique> <leader><leader> q:ivertical botright help<Space>
+nnoremap <unique> <leader>h q:ivertical botright help<Space>
 
 
 
@@ -207,14 +208,14 @@ set wrapscan
 " Configure the command-line
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Improve command line, go to the command window !
-set cmdwinheight=100
+set cmdwinheight=25
 " TODO voir pourquoi le set history ne marche pas
 set history=200
-nnoremap : q:i
+nnoremap : q:
 augroup escape_command_window
     autocmd!
-    autocmd CmdwinEnter * noremap <Esc> <C-c><C-c>
-    autocmd CmdwinLeave * unmap <Esc>
+    autocmd CmdwinEnter * noremap <buffer> <leader><leader> <C-c><C-c>
+    autocmd CmdwinEnter * inoremap <buffer> <leader><leader> <C-c><C-c>
 augroup END
 
 
@@ -222,11 +223,24 @@ augroup END
 nnoremap <silent> <leader>t O<Esc>0DiTODO<Space><Esc>:call NERDComment('n', 'comment')<CR>A
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Miscellaneous
+" Copying and pasting.
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" TODO mettre un mapping
+" set pastetoggle=
+
+" TODO relire cette doc
+" set clipboard=unnamed
+
+set nopaste
+nnoremap <leader>p :set paste<CR>"+p:set nopaste<CR>
+
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Miscellaneous.
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set writebackup
-set nopaste
-nnoremap <leader>p :set paste<CR>p:set nopaste<CR>
+
 " TODO find a mean to highlight the current search term with a different color
 " TODO customize the airline status to remove undesired information, and get
 " to know what the 'trailing' information is.
@@ -242,7 +256,9 @@ nnoremap <leader>p :set paste<CR>p:set nopaste<CR>
 "suivants (ne pas les mettre ici mais dans leur section, exemple le premier
 "appartient a la section de la commande line window: 
 
-vnoremap <Esc> o<Esc>
+" TODO ne jamais mapper Esc, ca clash avec les arrow meme si elle sont mappees
+" sur nop
+" vnoremap <Esc> o<Esc>
 
 " TODO mettre en place la navigation par buffer comme si c'etait des tabs, et
 " mapper comme pour un navigateur <C-Tab>, <C-S-Tab>, <C-opennew>, <C-edit>,
@@ -274,4 +290,10 @@ vnoremap <Esc> o<Esc>
 " TODO voir pourquoi ca ne marche pas
 " autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red             
 " autocmd InsertLeave * match ExtraWhitespace /\s\+$/
+
+" TODO remap * en mode normal pour qu'il lance le search mais reste sur le
+" mot courant, ensuite je me deplace avec n ou N selon mon besoin, et virer le
+" wrapsearch
+
+" TODO voir set wildmode
 

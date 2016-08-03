@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# TODO faire une petite boucle de grep pour parser les options de vim --version 
+# pour check que j'ai tout ce que je veux : +clipboard, +python", etc
+# clipboard, python, python3, cmdline_hist, vertsplit
 # TODO ne pas installer si lc repertoir cvim existe deja
 # TODO mettre une option pour forcer linstall si cvim existe deja
 # TODO il faut que le runtime ne pointe pas sur le repertoire .vim du user mais soit dans le reperter /usr/local/vim/.vim
