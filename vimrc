@@ -2,6 +2,18 @@
 " This must be first, because it changes other options as a side effect.
 set nocompatible
 
+" Autosource vimrc on write.
+augroup reload_vimrc
+    autocmd!
+    autocmd BufWritePost $MYVIMRC source $MYVIMRC
+augroup END
+
+" As we autosource vimrc on write and often use '<unique>' when defining
+" mappings, we can have warnings each time we save. So we reset the all the
+" mappings at start.
+mapclear
+mapclear!
+
 " TODO voir pour faire un mapclear (et un function clear ?, peut etre pas
 " necessaire car on peut declarer les fonctions grace a function! mais c'est
 " peut-etre crade, voir aussi pour les noms d'autogroups)
@@ -9,6 +21,57 @@ set nocompatible
 "TODO voir localmapleader et g:mapleader
 let mapleader = ","
 " set timeoutlen=666
+
+
+
+
+
+
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Configure NERDCommenter.
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
+
+
+
+
+
+
+
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Configure Airline/the status line.
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set noshowmode
+set ttimeoutlen=50
+set laststatus=2
+let g:airline_powerline_fonts = 1
+
+
+
+
+
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Configure easy-tags.
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:easytags_async = 1
+let g:easytags_always_enabled = 1
+let g:easytags_resolve_links = 1
+" TODO setter l'option g:easytags_file quand j'aurais fini mon script
+" d'install auto pour que ça n'aille pas dans ~/.vim/tags mais
+" ~/something/tags, something sera sans doute un truc du genre $VIMRUNTIME ou
+" autre
+" TODO lire la doc des tags
+
+
+
+
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -37,25 +100,21 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'scrooloose/nerdcommenter'
 " TODO voir ca et si je trouve un truc de match pairs correct
 " alvan/vim-closetag
+Plugin 'xolox/vim-misc'
+Plugin 'xolox/vim-easytags'
+Plugin 'majutsushi/tagbar'
+" TODO behind
+" Plugin 'SirVer/ultisnips'
 call vundle#end()
 filetype plugin indent on
 " Update plugins.
 " TODO il faudrait utliser une fonction pour faire  if je suis dans le vimrc,
 " je le write avant et c'est pas le cas juste j'update
-nnoremap <unique> <leader>u :PluginUpdate<CR>
+nnoremap <unique> <leader>u :update<CR>:PluginUpdate<CR>
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Configure NERDCommenter.
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Add spaces after comment delimiters by default
-let g:NERDSpaceDelims = 1
 
-" Configure the status line.
-set noshowmode
-set ttimeoutlen=50
-" always have a status line
-set laststatus=2
-let g:airline_powerline_fonts = 1
+
+
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -73,39 +132,6 @@ nnoremap <C-z> :update<CR>
 " taille, sauf je commence a bosser avec des buffers en guise de tabcs"
 
 
-" TODO there are many other keys to be no-oped, like page up/down, do it later.
-" Be a big boy, do not use arrows.
-" TODO revoir les modes du noremap pour etre sur de tous les couvrir
-inoremap <unique> <DOWN> <NOP>
-inoremap <unique> <UP> <NOP>
-inoremap <unique> <LEFT> <NOP>
-inoremap <unique> <RIGHT> <NOP>
-noremap <unique> <DOWN> <NOP>
-noremap <unique> <UP> <NOP>
-noremap <unique> <LEFT> <NOP>
-noremap <unique> <RIGHT> <NOP>
-inoremap <unique> <leader><leader> <Esc>
-noremap <unique> <leader><leader> <Esc>
-nnoremap <unique> <leader><Space> :noh<CR>
-
-
-" Indenting blocks without losing the selection.
-" TODO voir si c'est vraiment utile car l'indentation devrait etre geree
-" automatiquement par des plugins ou la commande = ou gq ?
-vnoremap < <gv
-vnoremap > >gv
-
-" TODO si je n'utilise plus ^ et $, je les unmap ou utilise pour autre chose
-nnoremap H ^
-nnoremap L $
-" TODO mettre des unique, silent, expr partout ou cest necessaire pour les
-" mappings
-
-" Autosource vimrc on write.
-augroup reload_vimrc
-    autocmd!
-    autocmd BufWritePost $MYVIMRC source $MYVIMRC
-augroup END
 
 
 
@@ -115,7 +141,79 @@ augroup END
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Congifure appearance : line numbers, color scheme, indentation, etc.
+" Motions.
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" TODO there are many other keys to be no-oped, like page up/down, do it later.
+" Be a big boy, do not use arrows.
+" TODO revoir les modes du noremap pour etre sur de tous les couvrir
+
+" Disable arrows keys for all modes except Command-line as it is convenient to
+" move through last searches/commands with the arrows.
+" Insert mode below.
+inoremap <unique> <DOWN> <NOP>
+inoremap <unique> <UP> <NOP>
+inoremap <unique> <LEFT> <NOP>
+inoremap <unique> <RIGHT> <NOP>
+" Normal, Visual, Select, Operator-pending modes below.
+noremap <unique> <DOWN> <NOP>
+noremap <unique> <UP> <NOP>
+noremap <unique> <LEFT> <NOP>
+noremap <unique> <RIGHT> <NOP>
+
+
+
+" TODO il faudrait unmap 0 aussi quand j'aurais trouve un moyen de faire la
+" meme chose, il me semble qu'une commande qui commence par 'g' le fait.
+nnoremap <unique> H ^
+nnoremap <unique> L $
+nnoremap <unique> ^ <NOP>
+nnoremap <unique> $ <NOP>
+
+
+" Have cursor always centered vertically
+set scrolloff=100
+" 'z.' and 'zz' become no use thanks to the 'scrolloff' option.
+nnoremap <unique> z. <NOP>
+nnoremap <unique> zz <NOP>
+
+
+
+
+
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""" Escaping.""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Remap the Escape feature to something faster.
+noremap! <unique> <leader><leader> <Esc>
+vnoremap <unique> <leader><leader> <Esc>
+
+
+
+
+
+
+
+
+" Indenting blocks without losing the selection.
+" TODO voir si c'est vraiment utile car l'indentation devrait etre geree
+" automatiquement par des plugins ou la commande = ou gq ?
+vnoremap <unique> < <gv
+vnoremap <unique> > >gv
+
+" TODO mettre des unique, silent, expr partout ou cest necessaire pour les
+" mappings
+
+
+
+
+
+
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Configure appearance : line numbers, color scheme, indentation, etc.
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set colorscheme and syntax, order of instructions matter !!
 " Normally t_Co should be set depending on the capabilities of the terminal,
@@ -134,8 +232,6 @@ set shiftwidth=4
 set expandtab
 set wrap
 set colorcolumn=80
-" Have cursor always centered vertically
-set scrolloff=100
 
 
 
@@ -200,7 +296,14 @@ set hlsearch
 set incsearch
 set ignorecase
 set smartcase
-set wrapscan
+" I disable wrapscan because I often miss the start/end of the file when
+" cycling with n/N. I prefer to go 'gg' or 'G' when I hit the start/end of the
+" file.
+" TODO le pb avec nowrapscan c'est que si je search dans le mauvais sens j'ai
+" un mismatch alors qu'en faisant n ou N derriere il trouve un match car je
+" repars dans le sens inverse, voir si je garde ca ou pas
+set nowrapscan
+nnoremap <unique> <silent> <leader><leader> :nohlsearch<CR>
 
 
 
@@ -211,11 +314,10 @@ set wrapscan
 set cmdwinheight=25
 " TODO voir pourquoi le set history ne marche pas
 set history=200
-nnoremap : q:
+nnoremap : q:i
 augroup escape_command_window
     autocmd!
-    autocmd CmdwinEnter * noremap <buffer> <leader><leader> <C-c><C-c>
-    autocmd CmdwinEnter * inoremap <buffer> <leader><leader> <C-c><C-c>
+    autocmd CmdwinEnter * nnoremap <buffer> <leader><leader> <C-c><C-c>
 augroup END
 
 
@@ -225,14 +327,11 @@ nnoremap <silent> <leader>t O<Esc>0DiTODO<Space><Esc>:call NERDComment('n', 'com
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Copying and pasting.
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" TODO mettre un mapping
-" set pastetoggle=
-
-" TODO relire cette doc
-" set clipboard=unnamed
-
+set clipboard=unnamedplus
 set nopaste
-nnoremap <leader>p :set paste<CR>"+p:set nopaste<CR>
+nnoremap <unique> <leader>p :set paste<CR>"+p:set nopaste<CR>
+inoremap <unique> <leader>p <C-r>+
+
 
 
 
@@ -296,4 +395,22 @@ set writebackup
 " wrapsearch
 
 " TODO voir set wildmode
+" TODO comment se deplacer dans le menu de completion donne par <Tab> quand on
+" a desactive les fleches ???
+
+" TODO configurer nerdcommenter pour pouvoir utiliser le '.' pour commenter a
+" nouveau car ca ne marche pas. Si ca n'est pas possible creuser du cote du
+" plugin 'repeat'
+" TODO voir l'option 'matchpairs' et tout ce qui va avec notamment le match
+" des " et ' qui ne marche pas et les plugins associes
+
+" TODO voir si je peux faire un docker de mon vim install
+
+" TODO voir pour mapper ctrl f et b vers les fonctions de base de H et L (High
+" et Low) qui amenent a la ligne tout en haut/bas de l'ecran. Faire une
+" fonction qui blink l'ancienne ligne courante et la nouvelle pour se reperer
+" plus facilement
+
+" TODO voir ctrl y e u d f et b en mode normal et zb et zt z- z<CR> aussi
+" TODO commande interessantes g* et g#
 
