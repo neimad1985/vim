@@ -1,11 +1,12 @@
-" Use Vim settings, rather than Vi settings (much better!).
+" Use Vim settings, rather than Vi settings (much better !).
 " This must be first, because it changes other options as a side effect.
+" Usually it is already set but enforce it, just in case.
 set nocompatible
 
 " Autosource vimrc on write.
 augroup reload_vimrc
     autocmd!
-    autocmd BufWritePost $MYVIMRC source $MYVIMRC
+    autocmd BufWritePost *vimrc source %
 augroup END
 
 " As we autosource vimrc on write and often use '<unique>' when defining
@@ -23,7 +24,8 @@ let mapleader = ","
 " set timeoutlen=666
 
 
-
+" TODO ne marche pas 
+nnoremap <leader>v edit $VIM/vimrc<CR>
 
 
 
@@ -78,39 +80,40 @@ let g:easytags_resolve_links = 1
 """"""""""""""""""""""""" Plugins management. """""""""""""""""""""""""""""""""
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-filetype off
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+" filetype off
+" set rtp+=~/.vim/bundle/Vundle.vim
+call plug#begin()
+" call plug#begin('$VIMRUNTIME/plugged')
 " Let Vundle manage itself
-Plugin 'VundleVim/Vundle.vim'
+" Plugin 'VundleVim/Vundle.vim'
 " Colorschemes
-Plugin 'nanotech/jellybeans.vim'
-Plugin 'Donearm/Ubaryd'
-Plugin 'tomasr/molokai'
+Plug 'nanotech/jellybeans.vim'
+Plug 'Donearm/Ubaryd'
+Plug 'tomasr/molokai'
 " Completion
 "Plugin 'Valloric/YouCompleteMe'
 "Plugin 'davidhalter/jedi-vim'
 " Status line
-Plugin 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline'
 " Highlight
-Plugin 'haya14busa/incsearch.vim'
+Plug 'haya14busa/incsearch.vim'
 " Git integration
-Plugin 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive'
 " Easy comments
-Plugin 'scrooloose/nerdcommenter'
+Plug 'scrooloose/nerdcommenter'
 " TODO voir ca et si je trouve un truc de match pairs correct
 " alvan/vim-closetag
-Plugin 'xolox/vim-misc'
-Plugin 'xolox/vim-easytags'
-Plugin 'majutsushi/tagbar'
+Plug 'xolox/vim-misc'
+Plug 'xolox/vim-easytags'
+Plug 'majutsushi/tagbar'
 " TODO behind
 " Plugin 'SirVer/ultisnips'
-call vundle#end()
-filetype plugin indent on
+call plug#end()
+" filetype plugin indent on
 " Update plugins.
 " TODO il faudrait utliser une fonction pour faire  if je suis dans le vimrc,
 " je le write avant et c'est pas le cas juste j'update
-nnoremap <unique> <leader>u :update<CR>:PluginUpdate<CR>
+nnoremap <unique> <leader>u :update<CR>:PlugUpdate<CR>
 
 
 
@@ -251,7 +254,9 @@ nnoremap <unique> <leader>h q:ivertical botright help<Space>
 
 
 
-nnorema Q gq
+" TODO ne marche pas , pourquoi ? mode visuel plutot que normal peut etre
+" connard
+nnoremap Q gq
 nnoremap gQ <NOP>
 
 " Allow backspacing over everything in insert mode.
@@ -414,3 +419,11 @@ set writebackup
 " TODO voir ctrl y e u d f et b en mode normal et zb et zt z- z<CR> aussi
 " TODO commande interessantes g* et g#
 
+" ffdsoi goifsjdg osigjs dfogijs dfogisjdfgoidsfjg odfsigj sdogij dfogij
+" dsfogijdsf gosidjg odfsigj sdfogijsdfogijs fdogijsdf goifsjdgosdfgsdfog sogf
+" o g osifgj osdfigj sodfigj sdfogijogij sodijg osdigj odfsigj ods godsjgi
+" odsfigj osdfigj sodfigj dsofigj osdijg odsigj  
+" odsigj sodfigj sdofigj sdfogij dfsogij dfsoigjsfoigj sofigjdfsoigjsodfigj
+" dfsoigj dsfogij sdfogij 
+" TODO faire une autocmd qui detecte si j'appuie sur k alors que je viens de
+" rentrer dans la command window, pour repasser du mode insert au mode normal

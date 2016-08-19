@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # TODO faire une petite boucle de grep pour parser les options de vim --version 
 # pour check que j'ai tout ce que je veux : +clipboard, +python", etc
-# clipboard, python, python3, cmdline_hist, vertsplit, X11, xterm_clipboard
+# clipboard, python, python3, cmdline_hist, vertsplit, X11, xterm_clipboard, eval, viminfo
 # TODO ne pas installer si lc repertoir cvim existe deja
 # TODO mettre une option pour forcer linstall si cvim existe deja
 # TODO il faut que le runtime ne pointe pas sur le repertoire .vim du user mais soit dans le reperter /usr/local/vim/.vim
@@ -22,7 +22,7 @@ function echo_g {
 echo_y NE PAS OUBLIER DE REMOVE TOUS LES UNCOMMENT
 
 VIM_NAME=customvim
-INSTALL_PATH=/usr/local/${VIM_NAME}
+INSTALL_PATH=~/${VIM_NAME}
 DL_DIRPATH=/tmp/${VIM_NAME}
 
 
@@ -89,7 +89,7 @@ echo_y "Cloning Vim from Github to '${DL_DIRPATH}'."
 
 echo_y "Configuring Vim."
 # TODO uncomment
-# cd ${DL_DIRPATH}
+cd ${DL_DIRPATH}
 # ./configure \
     # --prefix=${INSTALL_PATH} \
     # --enable-fail-if-missing \
@@ -107,11 +107,12 @@ echo_y "Making Vim."
 # make clean
 # make
 echo_y "Installing Vim."
-# sudo rm -rf ${INSTALL_PATH}
-# sudo make install
+rm -rf ${INSTALL_PATH}
+make install
 echo_y "Deleting '${DL_DIRPATH}'."
 # TODO uncomment
 # rm -rf ${DL_DIRPATH}
 #git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 
 echo_g "Vim successfully installed to '${INSTALL_PATH}'."
+# vim -V5toto --cmd 'set runtimepath-=~/.vim | set runtimepath-=~/.vim/after | set packpath-=~/.vim | set packpath-=~/.vim/after | set nocompatible' -i NONE -u rte
