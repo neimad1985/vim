@@ -83,7 +83,6 @@ let g:easytags_resolve_links = 1
 " filetype off
 " set rtp+=~/.vim/bundle/Vundle.vim
 call plug#begin()
-" call plug#begin('$VIMRUNTIME/plugged')
 " Let Vundle manage itself
 " Plugin 'VundleVim/Vundle.vim'
 " Colorschemes

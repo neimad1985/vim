@@ -2,12 +2,14 @@
 # TODO faire une petite boucle de grep pour parser les options de vim --version 
 # pour check que j'ai tout ce que je veux : +clipboard, +python", etc
 # clipboard, python, python3, cmdline_hist, vertsplit, X11, xterm_clipboard, eval, viminfo
-# TODO ne pas installer si lc repertoir cvim existe deja
-# TODO mettre une option pour forcer linstall si cvim existe deja
-# TODO il faut que le runtime ne pointe pas sur le repertoire .vim du user mais soit dans le reperter /usr/local/vim/.vim
-# pareil pour le vim rc
 
 set -e
+
+
+
+
+
+
 
 # 'echo' with yellow color.
 function echo_y {
@@ -19,8 +21,16 @@ function echo_g {
     echo -e '\e[1;36m'"$@"'\e[0m'
 }
 
-echo_y NE PAS OUBLIER DE REMOVE TOUS LES UNCOMMENT
 
+
+
+
+
+
+
+
+
+REPO_PATH=$(dirname $(readlink -f $0))
 VIM_NAME=customvim
 INSTALL_PATH=~/${VIM_NAME}
 DL_DIRPATH=/tmp/${VIM_NAME}
@@ -64,55 +74,135 @@ if [ -e ${INSTALL_PATH} -a ${FORCE_INSTALL} -eq 0 ]; then
     exit 1
 fi
 
+
+
+
+
+
+
+
+
+
+
+
 # First install dependencies needed for compilation.
 # This may be incomplete as I created this script on a station which had
 # already a lot of stuff installed. In such a case, compilation would fail with
 # a message indicating the missing library (hopefully). This should be added to
 # the list below.
 echo_y "Installing dependencies."
-# TODO uncomment
-# sudo apt-get install -y \
-    # git\
-    # build-essential\
-    # cmake\
-    # python-dev\
-    # python3-dev\
-    # libncurses5-dev\
-    # exuberant-ctags
+sudo apt-get install -y \
+    git\
+    build-essential\
+    cmake\
+    python-dev\
+    python3-dev\
+    libncurses5-dev\
+    exuberant-ctags
+
+
+
+
 
 
 
 echo_y "Cloning Vim from Github to '${DL_DIRPATH}'."
-# TODO uncomment
-# rm -rf ${DL_DIRPATH}
-# git clone https://github.com/vim/vim.git ${DL_DIRPATH}
+rm -rf ${DL_DIRPATH}
+git clone https://github.com/vim/vim.git ${DL_DIRPATH}
+
+
+
+
+
+
 
 echo_y "Configuring Vim."
-# TODO uncomment
 cd ${DL_DIRPATH}
-# ./configure \
-    # --prefix=${INSTALL_PATH} \
-    # --enable-fail-if-missing \
-    # --with-features=huge \
-    # --disable-gui \
-    # --with-x \
-    # --enable-multibyte \
-    # --enable-xim \
-    # --enable-xsmp \
-    # --disable-xsmp-interact \
-    # --with-tlib=ncurses \
-    # --enable-pythoninterp \
-    # --enable-python3interp
+./configure \
+    --prefix=${INSTALL_PATH} \
+    --enable-fail-if-missing \
+    --with-features=huge \
+    --disable-gui \
+    --with-x \
+    --enable-multibyte \
+    --enable-xim \
+    --enable-xsmp \
+    --disable-xsmp-interact \
+    --with-tlib=ncurses \
+    --enable-pythoninterp \
+    --enable-python3interp
+
+
+
+
+
+
 echo_y "Making Vim."
-# make clean
-# make
+make clean
+make
+
+
+
+
+
+
+
+
 echo_y "Installing Vim."
 rm -rf ${INSTALL_PATH}
 make install
+
+
+
+
+
+
+
 echo_y "Deleting '${DL_DIRPATH}'."
-# TODO uncomment
-# rm -rf ${DL_DIRPATH}
-#git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+rm -rf ${DL_DIRPATH}
+
+
+
+
+
+
+
+
+
+echo_y "Installing Vim plugins"
+VIM_ALIAS=${INSTALL_PATH}'/bin/vim --cmd "set runtimepath-=~/.vim | set runtimepath-=~/.vim/after | set packpath-=~/.vim | set packpath-=~/.vim/after | set nocompatible" -i '${INSTALL_PATH}'/share/vim/vimfiles/viminfo -u '${INSTALL_PATH}'/share/vim/vimfiles/vimrc'
+
+mkdir -p ${INSTALL_PATH}/share/vim/vimfiles/autoload
+wget -O ${INSTALL_PATH}/share/vim/vimfiles/autoload/plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+PLUG_BEGIN=$(grep -n 'call plug#begin' ${REPO_PATH}/vimrc | cut -f1 -d:)
+PLUG_END=$(grep -n 'call plug#end' ${REPO_PATH}/vimrc | cut -f1 -d:)
+sed -n ${PLUG_BEGIN},${PLUG_END}p ${REPO_PATH}/vimrc > ${INSTALL_PATH}/share/vim/vimfiles/vimrc
+
+eval ${VIM_ALIAS} '-c "PlugInstall | quit | quit"'
+
+
+
+
+
+
+
+echo_y "Installing vimrc file"
+cp ${REPO_PATH}/vimrc ${INSTALL_PATH}/share/vim/vimfiles
+
+
+
+
+
+
+
 
 echo_g "Vim successfully installed to '${INSTALL_PATH}'."
-# vim -V5toto --cmd 'set runtimepath-=~/.vim | set runtimepath-=~/.vim/after | set packpath-=~/.vim | set packpath-=~/.vim/after | set nocompatible' -i NONE -u rte
+echo_y "Add the alias above to your .bashrc file to use your custom Vim."
+echo alias vim=\'${VIM_ALIAS}\'
+
+
+
+
+
+
+
