@@ -18,7 +18,7 @@ function echo_y {
 
 # 'echo' with green color.
 function echo_g {
-    echo -e '\e[1;36m'"$@"'\e[0m'
+    echo -e '\e[1;32m'"$@"'\e[0m'
 }
 
 
@@ -170,14 +170,14 @@ rm -rf ${DL_DIRPATH}
 
 
 echo_y "Installing Vim plugins"
-VIM_ALIAS=${INSTALL_PATH}'/bin/vim --cmd "set runtimepath-=~/.vim | set runtimepath-=~/.vim/after | set packpath-=~/.vim | set packpath-=~/.vim/after | set nocompatible" -i '${INSTALL_PATH}'/share/vim/vimfiles/viminfo -u '${INSTALL_PATH}'/share/vim/vimfiles/vimrc'
 
 mkdir -p ${INSTALL_PATH}/share/vim/vimfiles/autoload
 wget -O ${INSTALL_PATH}/share/vim/vimfiles/autoload/plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 PLUG_BEGIN=$(grep -n 'call plug#begin' ${REPO_PATH}/vimrc | cut -f1 -d:)
 PLUG_END=$(grep -n 'call plug#end' ${REPO_PATH}/vimrc | cut -f1 -d:)
-sed -n ${PLUG_BEGIN},${PLUG_END}p ${REPO_PATH}/vimrc > ${INSTALL_PATH}/share/vim/vimfiles/vimrc
-
+echo 'set nocompatible' > ${INSTALL_PATH}/share/vim/vimfiles/vimrc
+sed -n ${PLUG_BEGIN},${PLUG_END}p ${REPO_PATH}/vimrc >> ${INSTALL_PATH}/share/vim/vimfiles/vimrc
+VIM_ALIAS=${INSTALL_PATH}'/bin/vim --cmd "set runtimepath-=~/.vim | set runtimepath-=~/.vim/after | set packpath-=~/.vim | set packpath-=~/.vim/after | set nocompatible" -i '${INSTALL_PATH}'/share/vim/vimfiles/viminfo -u '${INSTALL_PATH}'/share/vim/vimfiles/vimrc'
 eval ${VIM_ALIAS} '-c "PlugInstall | quit | quit"'
 
 
@@ -198,7 +198,6 @@ cp ${REPO_PATH}/vimrc ${INSTALL_PATH}/share/vim/vimfiles
 
 echo_g "Vim successfully installed to '${INSTALL_PATH}'."
 echo_y "Add the alias above to your .bashrc file to use your custom Vim."
-echo alias vim=\'${VIM_ALIAS}\'
 
 
 
