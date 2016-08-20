@@ -151,7 +151,7 @@ make
 echo_y "Installing Vim."
 rm -rf ${INSTALL_PATH}
 make install
-
+cd -
 
 
 
@@ -178,7 +178,9 @@ PLUG_END=$(grep -n 'call plug#end' ${REPO_PATH}/vimrc | cut -f1 -d:)
 echo 'set nocompatible' > ${INSTALL_PATH}/share/vim/vimfiles/vimrc
 sed -n ${PLUG_BEGIN},${PLUG_END}p ${REPO_PATH}/vimrc >> ${INSTALL_PATH}/share/vim/vimfiles/vimrc
 VIM_ALIAS=${INSTALL_PATH}'/bin/vim --cmd "set runtimepath-=~/.vim | set runtimepath-=~/.vim/after | set packpath-=~/.vim | set packpath-=~/.vim/after | set nocompatible" -i '${INSTALL_PATH}'/share/vim/vimfiles/viminfo -u '${INSTALL_PATH}'/share/vim/vimfiles/vimrc'
-eval ${VIM_ALIAS} '-c "PlugInstall | quit | quit"'
+VIM_CMD=${VIM_ALIAS}' -c "PlugInstall | quit | quit"'
+eval ${VIM_CMD}
+#eval ${VIM_ALIAS} '-c "PlugInstall | quit | quit"'
 
 
 
