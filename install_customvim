@@ -23,26 +23,79 @@ sudo apt-get install -y \
     exuberant-ctags
 '''
 
+print(1111111111111111111111111111111111111111111111111111)
+
+def venv_imports(*args):
+
+    import sys
+    import subprocess
+    from importlib import import_module, __import__
+
+    venv_dirpath = os.path.join(tempfile.gettempdir(), 'venv')
+    venv_python3_binpath = os.path.join(venv_dirpath, "bin", "python3")
+    python3_binpath = sys.executable
+
+    if not python3_binpath.startswith(venv_dirpath):
+
+        pyvenv_binpath = os.path.join(os.path.dirname(python3_binpath), 'pyvenv')
+        subprocess.check_call(
+            [pyvenv_binpath, venv_dirpath],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+        try:
+            subprocess.check_call( [venv_python3_binpath, *sys.argv])
+        except subprocess.CalledProcessError as e:
+            sys.exit(e.returncode)
+
+    else:
+
+        def pip_install(libname, installed_libs):
+
+            if libname not in installed_libs:
+                subprocess.check_call(
+                    [venv_python3_binpath, "-c", "import pip; pip.main(['install', '{}'])".format(libname)],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL
+                )
+            installed_libs.add(libname)
+
+        installed_libs = set()
+        for arg in args:
+            if type(arg) is str:
+                pip_install(arg.split('.')[0], installed_libs)
+                globals()[arg] = __import__(arg)
+            else:
+                pip_install(arg[0].split('.')[0], installed_libs)
+                if type(arg[1]) is str:
+                    globals()[arg[1]] = getattr(import_module(arg[0]), arg[1])
+                else:
+                    for name in arg[1]:
+                        globals()[name] = getattr(import_module(arg[0]), name)
+
+
+
 import argparse
 import logging
-import coloredlogs
 import os
 import os.path
-import click
 import tempfile
 import shutil
 import re
 import urllib.request
-from plumbum import local
-from plumbum.cmd import git, make
-from plumbum import FG
 from contextlib import contextmanager
+venv_imports(
+    'coloredlogs',
+    'click',
+    ['plumbum', ['local', 'FG']],
+    ['plumbum.cmd', ['git', 'make', 'pyvenv']]
+)
 
 
 VIM_NAME='customvim'
 REPO_PATH=os.path.dirname(os.path.realpath(__file__))
 
-
+a = coloredlogs
 @click.command()
 @click.option(
     '-f',
@@ -59,13 +112,14 @@ REPO_PATH=os.path.dirname(os.path.realpath(__file__))
 )
 def vim_installer(install_dirpath, force_install):
 
+
     install_dirpath = _check_install_dirpath(install_dirpath, force_install)
     _set_global_logger()
-    vim_dl_path = os.path.join(tempfile.gettempdir(), 'vim')
-    _get_vim(vim_dl_path)
-    _configure_vim(install_dirpath, vim_dl_path)
-    _compile_vim(vim_dl_path)
-    _install_vim(install_dirpath, vim_dl_path)
+    vim_dl_dirpath = os.path.join(tempfile.gettempdir(), 'vim')
+    _get_vim(vim_dl_dirpath)
+    _configure_vim(install_dirpath, vim_dl_dirpath)
+    _compile_vim(vim_dl_dirpath)
+    _install_vim(install_dirpath, vim_dl_dirpath)
     _install_vim_plugins(install_dirpath)
 
 
@@ -97,23 +151,23 @@ def _set_global_logger():
     logger = logging.getLogger(os.path.basename(__file__))
 
 
-def _get_vim(vim_dl_path):
+def _get_vim(vim_dl_dirpath):
 
     logger.info('Getting Vim from Github')
-    if os.path.isfile(vim_dl_path):
-        os.remove(vim_dl_path)
-    if os.path.exists(vim_dl_path):
-        with _tmp_cd(vim_dl_path):
-            git('pull')
+    if os.path.isfile(vim_dl_dirpath):
+        os.remove(vim_dl_dirpath)
+    if os.path.exists(vim_dl_dirpath):
+        with _tmp_cd(vim_dl_dirpath):
+            git['pull']()
     else:
-        git('clone', 'https://github.com/vim/vim.git', vim_dl_path)
+        git['clone', 'https://github.com/vim/vim.git', vim_dl_dirpath]()
 
 
-def _configure_vim(install_dirpath, vim_dl_path):
+def _configure_vim(install_dirpath, vim_dl_dirpath):
 
-    with _tmp_cd(vim_dl_path):
+    with _tmp_cd(vim_dl_dirpath):
         logger.info('Configuring Vim')
-        make('clean')
+        make['clean']()
         configure = local[os.path.join(os.getcwd(), 'configure')]
         configure(
             '--prefix={}'.format(install_dirpath),
@@ -131,22 +185,22 @@ def _configure_vim(install_dirpath, vim_dl_path):
         )
 
 
-def _compile_vim(vim_dl_path):
+def _compile_vim(vim_dl_dirpath):
 
-    with _tmp_cd(vim_dl_path):
+    with _tmp_cd(vim_dl_dirpath):
         logger.info('Making Vim')
         make()
 
 
-def _install_vim(install_dirpath, vim_dl_path):
+def _install_vim(install_dirpath, vim_dl_dirpath):
 
-    with _tmp_cd(vim_dl_path):
+    with _tmp_cd(vim_dl_dirpath):
         logger.info("Installing Vim to '{}'".format(install_dirpath))
         if os.path.isfile(install_dirpath):
             os.remove(install_dirpath)
         if os.path.isdir(install_dirpath):
             shutil.rmtree(install_dirpath)
-        make('install')
+        make['install']()
 
 
 def _install_vim_plugins(install_dirpath):
