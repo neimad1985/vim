@@ -36,9 +36,9 @@ import urllib.request
 from plumbum import local
 from plumbum.cmd import git, make
 from plumbum import FG
+from contextlib import contextmanager
 
 
-VIM_DL_PATH = os.path.join(tempfile.gettempdir(), 'vim')
 VIM_NAME='customvim'
 REPO_PATH=os.path.dirname(os.path.realpath(__file__))
 
@@ -61,10 +61,11 @@ def vim_installer(install_dirpath, force_install):
 
     install_dirpath = _check_install_dirpath(install_dirpath, force_install)
     _set_global_logger()
-    _get_vim()
-    _configure_vim(install_dirpath)
-    _compile_vim()
-    _install_vim(install_dirpath)
+    vim_dl_path = os.path.join(tempfile.gettempdir(), 'vim')
+    _get_vim(vim_dl_path)
+    _configure_vim(install_dirpath, vim_dl_path)
+    _compile_vim(vim_dl_path)
+    _install_vim(install_dirpath, vim_dl_path)
     _install_vim_plugins(install_dirpath)
 
 
@@ -79,19 +80,14 @@ def _check_install_dirpath(install_dirpath, force_install):
     return os.path.realpath(install_dirpath)
 
 
-# Temporary 'cd' decorator
+@contextmanager
 def _tmp_cd(dirpath):
-    def cd_decorator(func):
-        def func_wrapper(*args, **kwargs):
-            owd = os.getcwd()
-            logger.debug("Changing to '{}'".format(dirpath))
-            os.chdir(dirpath)
-            ret = func(*args, **kwargs)
-            logger.debug("Changing back to '{}'".format(owd))
-            os.chdir(owd)
-            return ret
-        return func_wrapper
-    return cd_decorator
+    owd = os.getcwd()
+    logger.debug("Changing to '{}'".format(dirpath))
+    os.chdir(dirpath)
+    yield
+    logger.debug("Changing back to '{}'".format(owd))
+    os.chdir(owd)
 
 
 def _set_global_logger():
@@ -101,58 +97,56 @@ def _set_global_logger():
     logger = logging.getLogger(os.path.basename(__file__))
 
 
-def _get_vim():
+def _get_vim(vim_dl_path):
 
     logger.info('Getting Vim from Github')
-    if os.path.isfile(VIM_DL_PATH):
-        os.remove(VIM_DL_PATH)
-    if os.path.exists(VIM_DL_PATH):
-        owd = os.getcwd()
-        os.chdir(VIM_DL_PATH)
-        git('pull')
-        os.chdir(owd)
+    if os.path.isfile(vim_dl_path):
+        os.remove(vim_dl_path)
+    if os.path.exists(vim_dl_path):
+        with _tmp_cd(vim_dl_path):
+            git('pull')
     else:
-        git('clone', 'https://github.com/vim/vim.git', VIM_DL_PATH)
+        git('clone', 'https://github.com/vim/vim.git', vim_dl_path)
 
 
-@_tmp_cd(VIM_DL_PATH)
-def _configure_vim(install_dirpath):
+def _configure_vim(install_dirpath, vim_dl_path):
 
-    logger.info('Configuring Vim')
-    make('clean')
-    configure = local['./configure']
-    configure(
-        '--prefix={}'.format(install_dirpath),
-        '--enable-fail-if-missing',
-        '--with-features=huge',
-        '--disable-gui',
-        '--with-x',
-        '--enable-multibyte',
-        '--enable-xim',
-        '--enable-xsmp',
-        '--disable-xsmp-interact',
-        '--with-tlib=ncurses',
-        '--enable-pythoninterp',
-        '--enable-python3interp',
-    )
-
-
-@_tmp_cd(VIM_DL_PATH)
-def _compile_vim():
-
-    logger.info('Making Vim')
-    make()
+    with _tmp_cd(vim_dl_path):
+        logger.info('Configuring Vim')
+        make('clean')
+        configure = local[os.path.join(os.getcwd(), 'configure')]
+        configure(
+            '--prefix={}'.format(install_dirpath),
+            '--enable-fail-if-missing',
+            '--with-features=huge',
+            '--disable-gui',
+            '--with-x',
+            '--enable-multibyte',
+            '--enable-xim',
+            '--enable-xsmp',
+            '--disable-xsmp-interact',
+            '--with-tlib=ncurses',
+            '--enable-pythoninterp',
+            '--enable-python3interp',
+        )
 
 
-@_tmp_cd(VIM_DL_PATH)
-def _install_vim(install_dirpath):
+def _compile_vim(vim_dl_path):
 
-    logger.info("Installing Vim to '{}'".format(install_dirpath))
-    if os.path.isfile(install_dirpath):
-        os.remove(install_dirpath)
-    if os.path.isdir(install_dirpath):
-        shutil.rmtree(install_dirpath)
-    make('install')
+    with _tmp_cd(vim_dl_path):
+        logger.info('Making Vim')
+        make()
+
+
+def _install_vim(install_dirpath, vim_dl_path):
+
+    with _tmp_cd(vim_dl_path):
+        logger.info("Installing Vim to '{}'".format(install_dirpath))
+        if os.path.isfile(install_dirpath):
+            os.remove(install_dirpath)
+        if os.path.isdir(install_dirpath):
+            shutil.rmtree(install_dirpath)
+        make('install')
 
 
 def _install_vim_plugins(install_dirpath):
