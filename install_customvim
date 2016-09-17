@@ -162,7 +162,7 @@ def _check_install_dirpath(install_dirpath, force_install):
 def _set_global_logger():
 
     global logger
-    coloredlogs.install(level='DEBUG', fmt='%(levelname)s %(message)s')
+    coloredlogs.install(level='INFO', fmt='%(levelname)s %(message)s')
     logger = logging.getLogger(os.path.basename(__file__))
 
 
