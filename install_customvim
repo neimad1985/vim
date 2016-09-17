@@ -26,7 +26,7 @@ def venv_imports(*args):
                 stderr=subprocess.DEVNULL
             )
             subprocess.check_call(
-                [python3_venv_binpath, '-m', 'pip'],
+                [venv_python3_binpath, '-m', 'pip'],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL
             )
