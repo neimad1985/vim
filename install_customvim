@@ -21,7 +21,7 @@ def venv_imports(*args):
         if not os.path.exists(venv_dirpath):
             print("Building temporary virtual environment, a few seconds is needed.")
             subprocess.check_call(
-                [python3_binpath, '-m', 'venv', venv_dirpath],
+                [python3_binpath, '-m', 'venv', '--without-pip', venv_dirpath],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL
             )
