@@ -6,6 +6,62 @@
 #  TODO mettre un message qui donnes les dependances de ce module ou qui les dl auto
 # si je fais un packaging debian et mac
 
+def venv_imports(*args):
+
+    import sys
+    import subprocess
+    from importlib import import_module, __import__
+
+    venv_dirpath = os.path.join(tempfile.gettempdir(), 'vim_installer_venv')
+    venv_python3_binpath = os.path.join(venv_dirpath, "bin", "python3")
+    python3_binpath = sys.executable
+
+    if not python3_binpath.startswith(venv_dirpath):
+
+        if not os.path.exists(venv_dirpath):
+            print("Building temporary virtual environment, a few seconds is needed.")
+            pyvenv_binpath = os.path.join(os.path.dirname(python3_binpath), 'pyvenv')
+            subprocess.check_call(
+                [pyvenv_binpath, venv_dirpath],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
+            )
+        try:
+            subprocess.check_call( [venv_python3_binpath, *sys.argv])
+        except subprocess.CalledProcessError as e:
+            sys.exit(e.returncode)
+        sys.exit(0)
+
+    else:
+
+        def import_install(module, attribute=None):
+
+            if attribute is None:
+                def import_statement(): globals()[module] = __import__(module)
+            else:
+                def import_statement() : globals()[attribute] = getattr(import_module(module), attribute)
+            try:
+                import_statement()
+            except ImportError:
+                subprocess.check_call(
+                    [venv_python3_binpath, "-c", "import pip; pip.main(['install', '{}'])".format(module.split('.')[0])],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL
+                )
+                import_statement()
+
+
+        for arg in args:
+
+            if type(arg) is str:
+                import_install(arg)
+            else:
+                if type(arg[1]) is str:
+                    import_install(arg[0], arg[1])
+                else:
+                    for attribute in arg[1]:
+                        import_install(arg[0], attribute)
+
 '''
 # First install dependencies needed for compilation.
 # This may be incomplete as I created this script on a station which had
@@ -22,57 +78,6 @@ sudo apt-get install -y \
     libncurses5-dev\
     exuberant-ctags
 '''
-
-print(1111111111111111111111111111111111111111111111111111)
-
-def venv_imports(*args):
-
-    import sys
-    import subprocess
-    from importlib import import_module, __import__
-
-    venv_dirpath = os.path.join(tempfile.gettempdir(), 'venv')
-    venv_python3_binpath = os.path.join(venv_dirpath, "bin", "python3")
-    python3_binpath = sys.executable
-
-    if not python3_binpath.startswith(venv_dirpath):
-
-        pyvenv_binpath = os.path.join(os.path.dirname(python3_binpath), 'pyvenv')
-        subprocess.check_call(
-            [pyvenv_binpath, venv_dirpath],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
-        )
-        try:
-            subprocess.check_call( [venv_python3_binpath, *sys.argv])
-        except subprocess.CalledProcessError as e:
-            sys.exit(e.returncode)
-
-    else:
-
-        def pip_install(libname, installed_libs):
-
-            if libname not in installed_libs:
-                subprocess.check_call(
-                    [venv_python3_binpath, "-c", "import pip; pip.main(['install', '{}'])".format(libname)],
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL
-                )
-            installed_libs.add(libname)
-
-        installed_libs = set()
-        for arg in args:
-            if type(arg) is str:
-                pip_install(arg.split('.')[0], installed_libs)
-                globals()[arg] = __import__(arg)
-            else:
-                pip_install(arg[0].split('.')[0], installed_libs)
-                if type(arg[1]) is str:
-                    globals()[arg[1]] = getattr(import_module(arg[0]), arg[1])
-                else:
-                    for name in arg[1]:
-                        globals()[name] = getattr(import_module(arg[0]), name)
-
 
 
 import argparse
@@ -91,12 +96,10 @@ venv_imports(
     ['plumbum.cmd', ['git', 'make', 'pyvenv']]
 )
 
-
 VIM_NAME='customvim'
 REPO_PATH=os.path.dirname(os.path.realpath(__file__))
 
-a = coloredlogs
-@click.command()
+@click.command(context_settings={'help_option_names': ['-h', '--help']})
 @click.option(
     '-f',
     '--force-install',
