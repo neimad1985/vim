@@ -90,6 +90,7 @@ sudo apt-get install -y \
 '''
 
 
+import sys
 import argparse
 import logging
 import os
@@ -128,12 +129,23 @@ def vim_installer(install_dirpath, force_install):
 
     install_dirpath = _check_install_dirpath(install_dirpath, force_install)
     _set_global_logger()
+    _warn_dependencies()
     vim_dl_dirpath = os.path.join(tempfile.gettempdir(), 'vim')
     _get_vim(vim_dl_dirpath)
     _configure_vim(install_dirpath, vim_dl_dirpath)
     _compile_vim(vim_dl_dirpath)
     _install_vim(install_dirpath, vim_dl_dirpath)
     _install_vim_plugins(install_dirpath)
+
+
+@contextmanager
+def _tmp_cd(dirpath):
+    owd = os.getcwd()
+    logger.debug("Changing to '{}'".format(dirpath))
+    os.chdir(dirpath)
+    yield
+    logger.debug("Changing back to '{}'".format(owd))
+    os.chdir(owd)
 
 
 def _check_install_dirpath(install_dirpath, force_install):
@@ -147,21 +159,22 @@ def _check_install_dirpath(install_dirpath, force_install):
     return os.path.realpath(install_dirpath)
 
 
-@contextmanager
-def _tmp_cd(dirpath):
-    owd = os.getcwd()
-    logger.debug("Changing to '{}'".format(dirpath))
-    os.chdir(dirpath)
-    yield
-    logger.debug("Changing back to '{}'".format(owd))
-    os.chdir(owd)
-
-
 def _set_global_logger():
 
     global logger
     coloredlogs.install(level='DEBUG', fmt='%(levelname)s %(message)s')
     logger = logging.getLogger(os.path.basename(__file__))
+
+
+def _warn_dependencies():
+
+    logger.warning(
+        "Make sure the following libs installed or the script will fail : "
+        "git make gcc python-dev python3-dev libncurses5-dev"
+    )
+    logger.warning("Press Enter to continue, anything else to abort")
+    if click.getchar() != "\r":
+        sys.exit(-1)
 
 
 def _get_vim(vim_dl_dirpath):
