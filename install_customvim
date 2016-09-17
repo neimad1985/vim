@@ -20,9 +20,8 @@ def venv_imports(*args):
 
         if not os.path.exists(venv_dirpath):
             print("Building temporary virtual environment, a few seconds is needed.")
-            pyvenv_binpath = os.path.join(os.path.dirname(python3_binpath), 'pyvenv')
             subprocess.check_call(
-                [pyvenv_binpath, venv_dirpath],
+                [python3_binpath, '-m', 'venv', venv_dirpath],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL
             )
@@ -95,7 +94,7 @@ venv_imports(
     'coloredlogs',
     'click',
     ['plumbum', ['local', 'FG']],
-    ['plumbum.cmd', ['git', 'make', 'pyvenv']]
+    ['plumbum.cmd', ['git', 'make']]
 )
 
 VIM_NAME='customvim'
