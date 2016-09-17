@@ -27,7 +27,9 @@ def venv_imports(*args):
                 stderr=subprocess.DEVNULL
             )
         try:
-            subprocess.check_call( [venv_python3_binpath, *sys.argv])
+            args = [venv_python3_binpath]
+            args.extend(sys.argv)
+            subprocess.check_call(args)
         except subprocess.CalledProcessError as e:
             sys.exit(e.returncode)
         sys.exit(0)
