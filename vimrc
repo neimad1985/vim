@@ -6,7 +6,7 @@ set nocompatible
 " Autosource vimrc on write.
 augroup reload_vimrc
     autocmd!
-    autocmd BufWritePost $VIM/vimfiles/vimrc source $VIM/vimfiles/vimrc | AirlineRefresh
+    autocmd BufWritePost *vimrc source $VIM/vimfiles/vimrc | AirlineRefresh
 augroup END
 
 " As we autosource vimrc on write and often use '<unique>' when defining
@@ -231,7 +231,6 @@ colorscheme ubaryd
 set list
 set listchars=tab:>.,trail:.,eol:-,nbsp:%,extends:~,precedes:~
 set relativenumber
-"set norelativenumber
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
