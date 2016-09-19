@@ -12,14 +12,14 @@ def venv_imports(*args):
     import subprocess
     from importlib import import_module, __import__
 
-    venv_dirpath = os.path.join(tempfile.gettempdir(), 'vim_installer_venv')
+    venv_dirpath = os.path.join(os.path.realpath(tempfile.gettempdir()), 'vim_installer_venv')
     venv_python3_binpath = os.path.join(venv_dirpath, "bin", "python3")
     python3_binpath = sys.executable
 
     if not python3_binpath.startswith(venv_dirpath):
 
         if not os.path.exists(venv_dirpath):
-            print("Building temporary virtual environment, a few seconds is needed.")
+            print("Building temporary virtual environment, takes a few seconds.")
             subprocess.check_call(
                 [python3_binpath, '-m', 'venv', '--without-pip', venv_dirpath],
                 stdout=subprocess.DEVNULL,
@@ -90,8 +90,6 @@ venv_imports(
     ['plumbum.cmd', ['git', 'make']]
 )
 
-VIM_NAME='customvim'
-REPO_PATH=os.path.dirname(os.path.realpath(__file__))
 
 @click.command(context_settings={'help_option_names': ['-h', '--help']})
 @click.option(
@@ -105,7 +103,7 @@ REPO_PATH=os.path.dirname(os.path.realpath(__file__))
     '-p',
     '--install-dirpath',
     help='The installation directory path',
-    default=os.path.join(os.path.expanduser('~'), VIM_NAME)
+    default=os.path.join(os.path.expanduser('~'), 'customvim')
 )
 def vim_installer(install_dirpath, force_install):
 
@@ -114,9 +112,11 @@ def vim_installer(install_dirpath, force_install):
     _set_global_logger()
     _warn_dependencies()
     vim_dl_dirpath = os.path.join(tempfile.gettempdir(), 'vim')
+    '''
     _get_vim(vim_dl_dirpath)
     _configure_vim(install_dirpath, vim_dl_dirpath)
     _compile_vim(vim_dl_dirpath)
+    '''
     _install_vim(install_dirpath, vim_dl_dirpath)
     _install_vim_plugins(install_dirpath)
 
@@ -220,7 +220,10 @@ def _install_vim_plugins(install_dirpath):
     with open(os.path.join(vim_autoload_dirpath, 'plug.vim'), mode='w', encoding='utf8') as f:
         with urllib.request.urlopen('https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim') as response:
             f.write(response.read().decode('utf8'))
-    repo_vimrc_filepath = os.path.join(REPO_PATH, 'vimrc')
+    repo_vimrc_filepath = os.path.join(
+        os.path.dirname(os.path.realpath(__file__)),
+        'vimrc'
+    )
     vimfiles_dirpath = os.path.join(install_dirpath, 'share', 'vim', 'vimfiles')
     vimrc_filepath = os.path.join(vimfiles_dirpath, 'vimrc')
     viminfo_filepath = os.path.join(vimfiles_dirpath, 'viminfo')
@@ -243,7 +246,8 @@ def _install_vim_plugins(install_dirpath):
     vim['-c', 'PlugInstall', '-c', 'qall'] & FG
     vim_options[1] = '"{}"'.format(vim_options[1])
     vim_alias="alias vim='{} {}'".format(vim_binpath, ' '.join(vim_options))
-    shutil.copy(repo_vimrc_filepath, vimrc_filepath)
+    os.remove(vimrc_filepath)
+    os.symlink(repo_vimrc_filepath, vimrc_filepath)
     logger.info("Vim successfully installed to '{}'".format(install_dirpath))
     logger.info('Add the alias above to your .bashrc file to use your custom Vim')
     logger.info(vim_alias)

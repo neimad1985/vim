@@ -6,7 +6,7 @@ set nocompatible
 " Autosource vimrc on write.
 augroup reload_vimrc
     autocmd!
-    autocmd BufWritePost *vimrc source %
+    autocmd BufWritePost $VIM/vimfiles/vimrc source $VIM/vimfiles/vimrc | AirlineRefresh
 augroup END
 
 " As we autosource vimrc on write and often use '<unique>' when defining
@@ -25,7 +25,7 @@ let mapleader = ","
 
 
 " TODO ne marche pas 
-nnoremap <leader>v edit $VIM/vimrc<CR>
+" nnoremap <leader>v edit /home/neimad/customvim/share/vim/vimfiles/vimrc<CR>
 
 
 
@@ -48,10 +48,16 @@ let g:NERDSpaceDelims = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Configure Airline/the status line.
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Do not show mode as we use a custom status line
 set noshowmode
 set ttimeoutlen=50
+" Show status line even when only one file is opened
 set laststatus=2
 let g:airline_powerline_fonts = 1
+" Enable the list of buffers
+"let g:airline#extensions#tabline#enabled = 1
+" Show only the filename
+" let g:airline#extensions#tabline#fnamemod = ':t'
 
 
 
@@ -122,10 +128,8 @@ nnoremap <unique> <leader>u :update<CR>:PlugUpdate<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """""""""""""""""""""" Quiting and saving."""""""""""""""""""""""""""""""""""""
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" TODO ne fonctionne pas
-" nnoremap <Esc> :q<CR>
 
-" <C-v> is usually used to put the stop the process and put it to backgroound.
+" <C-v> is usually used to stop the process and put it to backgroound.
 " I never use this feature so map it to update.
 nnoremap <C-z> :update<CR>
 
@@ -227,7 +231,7 @@ colorscheme ubaryd
 set list
 set listchars=tab:>.,trail:.,eol:-,nbsp:%,extends:~,precedes:~
 set relativenumber
-set number
+"set norelativenumber
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
