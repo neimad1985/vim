@@ -25,7 +25,7 @@ let mapleader = ","
 
 
 " TODO ne marche pas 
-" nnoremap <leader>v edit /home/neimad/customvim/share/vim/vimfiles/vimrc<CR>
+nnoremap <leader>v :edit $VIM/vimfiles/vimrc<CR>
 
 
 
@@ -178,11 +178,32 @@ nnoremap <unique> $ <NOP>
 
 " Have cursor always centered vertically
 set scrolloff=100
-" 'z.' and 'zz' become no use thanks to the 'scrolloff' option.
+" z., zz, <C-e>, <C-y> become no use thanks to the 'scrolloff' option.
 nnoremap <unique> z. <NOP>
 nnoremap <unique> zz <NOP>
+nnoremap <unique> <C-e> <NOP>
+nnoremap <unique> <C-y> <NOP>
+
+" <C-d> normally scrolls down but the command :shell opens a shell from Vim
+" and <C-d> closes it. So we remap <C-d> to :shell to be able to open and
+" close a shell with the same key sequence. <C-u> is the counterpart of <C-d>
+" and those two do quite the same job as <C-b> and <C-f>, so we remap them (we
+" prefer scrolling down half a window that entirely).
+set shell=/bin/bash
+nnoremap <unique> <C-d> :shell<CR>
+nnoremap <unique> <C-u> <NOP>
+nnoremap <unique> <C-f> <C-d>
+nnoremap <unique> <C-b> <C-u>
 
 
+" Get some simple motions in insert mode.
+inoremap <unique> <C-h> <LEFT>
+inoremap <unique> <C-j> <DOWN>
+inoremap <unique> <C-k> <UP>
+inoremap <unique> <C-l> <RIGHT>
+" TODO ne marche pas
+"inoremap <unique> <C-S-h> <ESC>I
+"inoremap <unique> <C-S-l> <ESC>A
 
 
 
@@ -419,6 +440,11 @@ set writebackup
 " plus facilement
 
 " TODO voir ctrl y e u d f et b en mode normal et zb et zt z- z<CR> aussi
+" il faut que je unmap ctrl y e u et d
+" je mets :shell sur ctrl d car pour close le shell c'est ctrl d aussi
+" ensuite je remap sur ctrl f et b les fonctions de ctr d et u et ce serait
+" cool de faire en sorte que l'ancienne ligne clignote, puis la nouvelle a la
+" fin du deplacement
 " TODO commande interessantes g* et g#
 
 " ffdsoi goifsjdg osigjs dfogijs dfogisjdfgoidsfjg odfsigj sdogij dfogij

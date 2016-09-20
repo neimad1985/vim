@@ -2,9 +2,7 @@
 # TODO faire une petite boucle de grep pour parser les options de vim --version 
 # pour check que j'ai tout ce que je veux : +clipboard, +python", etc
 # clipboard, python, python3, cmdline_hist, vertsplit, X11, xterm_clipboard, eval, viminfo
-#  TODO faire un check des outils shell que j'utilise en amont, make, git, etc
-#  TODO mettre un message qui donnes les dependances de ce module ou qui les dl auto
-# si je fais un packaging debian et mac
+# pour le plugin syntastic : autocmd, eval, file_in_path, modify_fname, quickfix, reltime, and user_commands
 
 def venv_imports(*args):
 
