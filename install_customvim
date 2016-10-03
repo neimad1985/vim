@@ -17,12 +17,6 @@ import shutil
 import re
 import urllib.request
 from contextlib import contextmanager
-venv_imports(
-    'coloredlogs',
-    'click',
-    ['plumbum', ['local', 'FG']],
-    ['plumbum.cmd', ['git', 'make']]
-)
 
 def venv_imports(*args):
 
@@ -88,6 +82,15 @@ def venv_imports(*args):
                 else:
                     for attribute in arg[1]:
                         import_install(arg[0], attribute)
+
+
+venv_imports(
+    'coloredlogs',
+    'click',
+    ['plumbum', ['local', 'FG']],
+    ['plumbum.cmd', ['git', 'make']]
+)
+
 
 @click.command(context_settings={'help_option_names': ['-h', '--help']})
 @click.option(
