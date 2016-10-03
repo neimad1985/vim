@@ -2,13 +2,32 @@
 # TODO faire une petite boucle de grep pour parser les options de vim --version 
 # pour check que j'ai tout ce que je veux : +clipboard, +python", etc
 # clipboard, python, python3, cmdline_hist, vertsplit, X11, xterm_clipboard, eval, viminfo
-# pour le plugin syntastic : autocmd, eval, file_in_path, modify_fname, quickfix, reltime, and user_commands
+# pour le plugin syntastic : autocmd, eval, file_in_path, modify_fname, quickfix, reltime, user_commands, signs
+
+print(111111111111111111111)
+
+
+import sys
+import argparse
+import logging
+import os
+import os.path
+import tempfile
+import shutil
+import re
+import urllib.request
+from contextlib import contextmanager
+venv_imports(
+    'coloredlogs',
+    'click',
+    ['plumbum', ['local', 'FG']],
+    ['plumbum.cmd', ['git', 'make']]
+)
 
 def venv_imports(*args):
 
-    import sys
     import subprocess
-    from importlib import import_module, __import__
+    from importlib import import_module
 
     venv_dirpath = os.path.join(os.path.realpath(tempfile.gettempdir()), 'vim_installer_venv')
     venv_python3_binpath = os.path.join(venv_dirpath, "bin", "python3")
@@ -70,25 +89,6 @@ def venv_imports(*args):
                     for attribute in arg[1]:
                         import_install(arg[0], attribute)
 
-
-import sys
-import argparse
-import logging
-import os
-import os.path
-import tempfile
-import shutil
-import re
-import urllib.request
-from contextlib import contextmanager
-venv_imports(
-    'coloredlogs',
-    'click',
-    ['plumbum', ['local', 'FG']],
-    ['plumbum.cmd', ['git', 'make']]
-)
-
-
 @click.command(context_settings={'help_option_names': ['-h', '--help']})
 @click.option(
     '-f',
@@ -149,7 +149,7 @@ def _warn_dependencies():
 
     logger.warning(
         "Make sure the following libs installed or the script will fail : "
-        "git make gcc python-dev python3-dev libncurses5-dev exuberant-ctags"
+        "git make gcc python-dev python3-dev pylint libncurses5-dev exuberant-ctags"
     )
     logger.warning("Press Enter to continue, anything else to abort")
     if click.getchar() != "\r":
