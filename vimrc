@@ -41,12 +41,9 @@ let g:NERDSpaceDelims = 1
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Configure Syntastic.
+" Configure NERDCommenter.
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"set signcolumn=yes
-"let g:syntastic_enable_signs = 1
-"let g:syntastic_python_python_exec = 'python3' 
-
+let g:ycm_python_binary_path = 'python3'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Configure Airline/the status line.
@@ -94,13 +91,11 @@ let g:easytags_resolve_links = 1
 call plug#begin()
 " Let Vundle manage itself
 " Plugin 'VundleVim/Vundle.vim'
-Plug 'Valloric/YouCompleteMe'
+Plug 'Valloric/YouCompleteMe', {'do': 'YCM_CORES=1 ./install.py'}
 " Colorschemes
 Plug 'nanotech/jellybeans.vim'
 Plug 'Donearm/Ubaryd'
 Plug 'tomasr/molokai'
-" Syntax checking
-Plug 'scrooloose/syntastic'
 " Completion
 "Plugin 'Valloric/YouCompleteMe'
 "Plugin 'davidhalter/jedi-vim'

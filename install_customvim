@@ -152,7 +152,7 @@ def _warn_dependencies():
 
     logger.warning(
         "Make sure the following libs installed or the script will fail : "
-        "git make gcc python-dev python3-dev pylint libncurses5-dev exuberant-ctags"
+        "git make cmake gcc g++ python-dev python3-dev pylint libncurses5-dev exuberant-ctags"
     )
     logger.warning("Press Enter to continue, anything else to abort")
     if click.getchar() != "\r":
