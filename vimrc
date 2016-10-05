@@ -41,7 +41,7 @@ let g:NERDSpaceDelims = 1
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Configure NERDCommenter.
+" Configure YouCompleteMe.
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:ycm_python_binary_path = 'python3'
 

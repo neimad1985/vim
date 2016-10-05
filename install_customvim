@@ -4,8 +4,6 @@
 # clipboard, python, python3, cmdline_hist, vertsplit, X11, xterm_clipboard, eval, viminfo
 # pour le plugin syntastic : autocmd, eval, file_in_path, modify_fname, quickfix, reltime, user_commands, signs
 
-print(111111111111111111111)
-
 
 import sys
 import argparse
@@ -88,7 +86,7 @@ venv_imports(
     'coloredlogs',
     'click',
     ['plumbum', ['local', 'FG']],
-    ['plumbum.cmd', ['git', 'make']]
+    ['plumbum.cmd', ['git', 'make', 'nproc']]
 )
 
 
@@ -197,7 +195,8 @@ def _compile_vim(vim_dl_dirpath):
 
     with _tmp_cd(vim_dl_dirpath):
         logger.info('Making Vim')
-        make()
+        nb_proc = int(nproc()) - 1
+        make['-j', nb_proc]()
 
 
 def _install_vim(install_dirpath, vim_dl_dirpath):
@@ -230,6 +229,7 @@ def _install_vim_plugins(install_dirpath):
         plugins = re.search('call plug#begin\(\).*?call plug#end\(\)', f.read(), re.DOTALL).group()
     with open(vimrc_filepath, mode='w', encoding='utf8') as f:
         f.write('set nocompatible\n')
+        f.write('let g:plug_timeout = 500\n')
         f.write(plugins)
     vim_binpath = os.path.join(install_dirpath, 'bin', 'vim')
     vim_options = [
@@ -242,7 +242,10 @@ def _install_vim_plugins(install_dirpath):
     ]
     vim = local[vim_binpath]
     vim = vim[vim_options]
-    vim['-c', 'PlugInstall', '-c', 'qall'] & FG
+    vim_plug_install = vim['-c', 'PlugInstall', '-c', 'qall']
+    vim_plug_install & FG
+    vim_plug_update = vim['-c', 'PlugUpdate!', '-c', 'qall']
+    vim_plug_update & FG
     vim_options[1] = '"{}"'.format(vim_options[1])
     vim_alias="alias vim='{} {}'".format(vim_binpath, ' '.join(vim_options))
     os.remove(vimrc_filepath)
